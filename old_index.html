@@ -1,0 +1,338 @@
+<html>
+    <head>
+            <style>
+                    #map {
+                      height: 400px;
+                      width: 100%;
+                     }
+                  </style>
+                  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+                  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-firestore.js"></script>
+                  
+                  <script>
+                      // Initialize Firebase
+                      // TODO: Replace with your project's customized code snippet
+                
+                      var config = {
+                        apiKey: "AIzaSyAJYfNfeuDpFqNacL6Ah1yPPOGUmkf77u8",
+                        authDomain: "vbb-dev.firebaseapp.com",
+                        projectId: "vbb-dev"
+                      };
+                      firebase.initializeApp(config);
+                      var db = firebase.firestore();
+                
+                </script>  
+              
+    </head>
+<body>
+<h3>Tracking My Box</h3>
+    <style>
+        .map_frame{
+          
+          position: absolute;
+          /* top: 0; */
+          /* left: 0; */
+          width: 100% !important;
+          height: 80% !important;
+        }
+
+    </style>
+    <div id="map" class="map_frame"></div>
+    
+  <script>
+      var map_loc = {lat: -25.363, lng: 131.044};
+      var map_loc1 = {lat: -25.365, lng: 131.044};
+      var map_loc2 = {lat: -25.368, lng: 131.044};
+      var marker;
+      var marker1;
+      var marker2;
+      var map;
+      var acc_x  = 'NA';
+      var acc_y  = 'NA';
+      var acc_z  = 'NA';
+
+      var gyro_x  = 'NA';
+      var gyro_y  = 'NA';
+      var gyro_z  = 'NA';
+
+      var speed = 'NA';
+
+      function initMap() {
+        // var uluru = {lat: -25.363, lng: 131.044};
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 18,
+          center: map_loc
+        });
+        // set_marker(map_loc,"Intial Location")
+        marker = new google.maps.Marker({
+          position: map_loc,
+          map: map,
+          title: "Vehicle 0 Location",
+          icon: 'icons8-car-26.png',
+          draggable: true
+        });
+        marker.setMap(map);
+
+        marker1 = new google.maps.Marker({
+          position: map_loc1,
+          map: map,
+          title: "Vehicle  1 Location",
+          icon: 'icons8-car-26-b.png',
+          draggable: true
+        });
+        marker1.setMap(map);
+
+        marker2 = new google.maps.Marker({
+          position: map_loc2,
+          map: map,
+          title: "Vehicle 2 Location",
+          icon: 'icons8-car-26-g.png',
+          draggable: true
+        });
+        marker2.setMap(map);
+
+
+      };
+
+      function set_marker(position,description){
+        marker.setPosition(position);
+        var infoWindow = new google.maps.InfoWindow();
+        infoWindow.setContent("<div style = 'width:100px;min-height:100px'>" + description + "</div>");
+        infoWindow.open(map, marker);
+        // map.setCenter(position);        
+      };
+
+      function set_marker1(position,description){
+        marker1.setPosition(position);
+        var infoWindow1 = new google.maps.InfoWindow();
+        infoWindow1.setContent("<div style = 'width:100px;min-height:100px'>" + description + "</div>");
+        infoWindow1.open(map, marker1);
+        // map.setCenter(position);        
+      };
+
+      function set_marker2(position,description){
+        marker2.setPosition(position);
+        var infoWindow2 = new google.maps.InfoWindow();
+        infoWindow2.setContent("<div style = 'width:100px;min-height:100px'>" + description + "</div>");
+        infoWindow2.open(map, marker2);
+        // map.setCenter(position);        
+      };
+    
+    function loadMap() {
+      var docRef = db.collection("tracker").doc("GjmEcy4Ub8r10SBtFGnF");
+      var docRef1 = db.collection("tracker").doc("V4iWB9Q7egQRFKjqzMle");
+      var docRef2 = db.collection("tracker").doc("t0Ug6GUe4i8IdHLQwxUz");
+
+      docRef.get().then(function(doc) {
+        if (doc.exists) {
+              console.log("Document data:", doc.data());
+              // map_loc = {lat: doc.data()['gps_location']['latitude'], lng: doc.data()['gps_location']['longitude'] };
+              // console.log("map Loc: ", map_loc);
+          } else {
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+          }
+          initMap()
+
+      }).catch(function(error) {
+          console.log("Error getting document:", error);
+      });      
+
+
+      docRef1.get().then(function(doc) {
+        if (doc.exists) {
+              console.log("Document data:", doc.data());
+              // map_loc1 = {lat: doc.data()['gps_location']['latitude'], lng: doc.data()['gps_location']['longitude'] };
+              // console.log("map Loc: ", map_loc1);
+          } else {
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+          }
+          initMap()
+      }).catch(function(error) {
+          console.log("Error getting document:", error);
+      });      
+
+      docRef2.get().then(function(doc) {
+        if (doc.exists) {
+              console.log("Document data:", doc.data());
+              // map_loc2 = {lat: doc.data()['gps_location']['latitude'], lng: doc.data()['gps_location']['longitude'] };
+              // console.log("map Loc: ", map_loc2);
+          } else {
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+          }
+          initMap()
+      }).catch(function(error) {
+          console.log("Error getting document:", error);
+      });      
+
+
+      docRef.onSnapshot(function(doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            if (doc.data()['device_data']['latitude'] && doc.data()['device_data']['longitude']){
+              map_loc = {lat: doc.data()['device_data']['latitude'], lng: doc.data()['device_data']['longitude'] };
+            
+              console.log("map Loc: ", map_loc);
+            }
+              // initMap()
+            var  acc_x  = 'NA';
+            var  acc_y  = 'NA';
+            var  acc_z  = 'NA';
+
+            var  gyro_x  = 'NA';
+            var  gyro_y  = 'NA';
+            var  gyro_z  = 'NA';
+
+            var speed = 'NA';
+
+            if (doc.data()['device_data']['Acc_X'] ){
+              acc_x  = String(doc.data()['device_data']['Acc_X']);
+            }
+            if (doc.data()['device_data']['Acc_Y'] ){
+              acc_y  = String(doc.data()['device_data']['Acc_Y']);
+            }
+            if ( doc.data()['device_data']['Acc_Z']){
+              acc_z  = String(doc.data()['device_data']['Acc_Z']);
+            }
+            if (doc.data()['device_data']['Gyro_X'] ){
+              gyro_x  = String(doc.data()['device_data']['Gyro_X']);
+            }
+            if ( doc.data()['device_data']['Gyro_Y']){
+              gyro_y  = String(doc.data()['device_data']['Gyro_Y']);
+            }
+            if ( doc.data()['device_data']['Gyro_Z']){
+              gyro_z  = String(doc.data()['device_data']['Gyro_Z']);
+            }
+            
+            if (doc.data()['device_data']['speed']){
+              speed = String(doc.data()['device_data']['speed']);
+            }
+
+              var desc_acc = "accl x =  " + acc_x + ", accl y = " + acc_y + ", accl z = " + acc_z ;
+              var desc_gyr = "gyro x =  " + gyro_x + ", gyro y = " + gyro_y + ", gyro z = " + gyro_z ;
+              var desc = desc_acc + ", " + desc_gyr + ", speed = " + speed;
+            // var desc = "Vehicle 2 "
+              set_marker(map_loc,desc);
+          } 
+      });      
+
+      docRef1.onSnapshot(function(doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            if (doc.data()['device_data']['latitude'] && doc.data()['device_data']['longitude']){
+              map_loc1 = {lat: doc.data()['device_data']['latitude'], lng: doc.data()['device_data']['longitude'] };
+            
+              console.log("map Loc: ", map_loc1);
+            }
+              // initMap()
+            var  acc_x_1  = 'NA';
+            var  acc_y_1  = 'NA';
+            var  acc_z_1  = 'NA';
+
+            var  gyro_x_1  = 'NA';
+            var  gyro_y_1  = 'NA';
+            var  gyro_z_1  = 'NA';
+
+            var speed_1 = 'NA';
+
+            if (doc.data()['device_data']['Acc_X'] ){
+              acc_x_1  = String(doc.data()['device_data']['Acc_X']);
+            }
+            if (doc.data()['device_data']['Acc_Y'] ){
+              acc_y_1  = String(doc.data()['device_data']['Acc_Y']);
+            }
+            if ( doc.data()['device_data']['Acc_Z']){
+              acc_z_1  = String(doc.data()['device_data']['Acc_Z']);
+            }
+            if (doc.data()['device_data']['Gyro_X'] ){
+              gyro_x_1  = String(doc.data()['device_data']['Gyro_X']);
+            }
+            if ( doc.data()['device_data']['Gyro_Y']){
+              gyro_y_1  = String(doc.data()['device_data']['Gyro_Y']);
+            }
+            if ( doc.data()['device_data']['Gyro_Z']){
+              gyro_z_1  = String(doc.data()['device_data']['Gyro_Z']);
+            }
+            
+            if (doc.data()['device_data']['speed']){
+              speed_1 = String(doc.data()['device_data']['speed']);
+            }
+
+              var desc_acc = "accl x =  " + acc_x_1 + ", accl y = " + acc_y_1 + ", accl z = " + acc_z_1 ;
+              var desc_gyr = "gyro x =  " + gyro_x_1 + ", gyro y = " + gyro_y_1 + ", gyro z = " + gyro_z_1 ;
+              var desc = desc_acc + ", " + desc_gyr + ", speed = " + speed_1;
+            // var desc = "Vehicle 2 "
+            set_marker1(map_loc1,desc);
+          } 
+      });      
+
+      docRef2.onSnapshot(function(doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            if (doc.data()['device_data']['latitude'] && doc.data()['device_data']['longitude']){
+              map_loc2 = {lat: doc.data()['device_data']['latitude'], lng: doc.data()['device_data']['longitude'] };
+            
+              console.log("map Loc: ", map_loc2);
+            }
+              // initMap()
+            var  acc_x_2  = 'NA';
+            var  acc_y_2  = 'NA';
+            var  acc_z_2  = 'NA';
+
+            var  gyro_x_2  = 'NA';
+            var  gyro_y_2  = 'NA';
+            var  gyro_z_2  = 'NA';
+
+            var speed_2 = 'NA';
+
+            if (doc.data()['device_data']['Acc_X'] ){
+              acc_x_2  = String(doc.data()['device_data']['Acc_X']);
+              document.getElementById('3d-acc-x').value = acc_x_2 ;
+            }
+            if (doc.data()['device_data']['Acc_Y'] ){
+              acc_y_2  = String(doc.data()['device_data']['Acc_Y']);
+              document.getElementById('3d-acc-y').value = acc_x_2;
+            }
+            if ( doc.data()['device_data']['Acc_Z']){
+              acc_z_2  = String(doc.data()['device_data']['Acc_Z']);
+              document.getElementById('3d-acc-z').value = acc_z_2;
+            }
+            if (doc.data()['device_data']['Gyro_X'] ){
+              gyro_x_2  = String(doc.data()['device_data']['Gyro_X']);
+              document.getElementById('3d-gyr-x').value = gyro_x_2;
+            }
+            if ( doc.data()['device_data']['Gyro_Y']){
+              gyro_y_2  = String(doc.data()['device_data']['Gyro_Y']);
+              document.getElementById('3d-gyr-y').value = gyro_y_2;
+            }
+            if ( doc.data()['device_data']['Gyro_Z']){
+              gyro_z_2  = String(doc.data()['device_data']['Gyro_Z']);
+              document.getElementById('3d-gyr-z').value = gyro_z_2;
+            }
+            
+            if (doc.data()['device_data']['speed']){
+              speed_2 = String(doc.data()['device_data']['speed']);
+              document.getElementById('3d-speed').value = speed_2;
+            }
+
+              var desc_acc = "accl x =  " + acc_x_2 + ", accl y = " + acc_y_2 + ", accl z = " + acc_z_2 ;
+              var desc_gyr = "gyro x =  " + gyro_x_2 + ", gyro y = " + gyro_y_2 + ", gyro z = " + gyro_z_2 ;
+              var desc = desc_acc + ", " + desc_gyr + ", speed = " + speed_2;
+            // var desc = "Vehicle 2 "
+            set_marker2(map_loc2,desc);
+          } 
+      });      
+
+
+}
+  </script>
+  
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCw_2F7fuMSmc9-JI5yhVXFmhFX-QWwd4U&callback=loadMap">
+    </script>
+    
+   </body>
+</html>

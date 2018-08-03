@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,900,900i');
+
+*{
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+li a{
+    text-decoration: none;
+    color: black;
+    padding: 1em 0;
+    margin: 1em;
+}
+
+li{
+    display: inline;
+}
+
+ul{
+    list-style: none;
+}
+
+nav{
+    background: white;
+    margin: 1.7em;
+    display: grid;
+    grid-template-columns: 65% auto;
+}
+
+
+h2 > a{
+    text-decoration: none;
+    color: #F57C00;
+    font-size: 1.5em;
+    font-style: italic;
+}
+
+.active{
+    border-bottom: 2px solid #F57C00;
+}
+
+.newBody{
+    width: 95%;
+    margin: 0 auto;
+    /* background: #FFB74D; */
+    /* background: #FFB74D; */
+}
+
+.details{
+    border: 2px solid gray;
+    width: 92%;
+    padding: 1em;
+    margin: 1em auto;
+    display: grid;
+    grid-template-areas: 
+    'speed turn'
+    'acceleration brake';
+}
+
+.border{
+    border: 2px solid #F57C00;
+    text-align: center;
+    width: 200px;
+    padding: 0.2em;
+}
+
+.left{
+    margin-left: 180px;
+}
+
+.right{
+    margin-left: 230px;
+    justify-content: right;
+    margin-right: 0;
+}
+
+.line h3{
+    margin-top: 50px;
+}
+
+.line{
+    justify-content: right;
+    width: 300px;
+    display: grid;
+    grid-template-areas: 
+    'desc content'
+    'd content'
+    ; 
+}
+
+.line h4{
+    grid-area: d;
+    margin-left: 40px;
+}
+
+.line h3{
+    grid-area: desc;
+}
+
+.line canvas{
+    grid-area: content;
+}
+
+h3{
+    margin: .7em;
+}
